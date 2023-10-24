@@ -1,0 +1,7 @@
+.vscode
+build
+bin
+paper
+build.bat
+run.bat
+devlog.md
