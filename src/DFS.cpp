@@ -27,7 +27,7 @@ void DFS::exec()
             else if (state == GridState::EMPTY)
             {
                 s.push(t);
-                m_map->visit(t.first, t.second);
+                m_map->pend(t.first, t.second);
                 std::cout << "[DFS] visit " << cur.first << ' ' << cur.second << '\n';
             }
         }
@@ -36,6 +36,7 @@ void DFS::exec()
     while (!s.empty())
     {
         auto cur = s.top();
+        m_map->visit(cur.first, cur.second);
         s.pop();
 
         std::unique_lock<std::mutex> lock(m_mutex);

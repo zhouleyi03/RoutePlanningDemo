@@ -235,6 +235,9 @@ void Proc::renderMap()
             case GridState::BARRIER:
                 fillGrid(i, j);
                 break;
+            case GridState::PENDING:
+                fillGrid(i, j, 0x00, 0x30, 0xff);
+                break;
             case GridState::STARTPOINT:
                 fillGrid(i, j, 0xff, 0x45, 0x00);
                 break;

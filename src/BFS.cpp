@@ -27,7 +27,7 @@ void BFS::exec()
             else if (state == GridState::EMPTY)
             {
                 q.push(t);
-                m_map->visit(t.first, t.second);
+                m_map->pend(t.first, t.second);
                 std::cout << "[BFS] visit " << cur.first << ' ' << cur.second << '\n';
             }
         }
@@ -36,6 +36,7 @@ void BFS::exec()
     while (!q.empty())
     {
         auto cur = q.front();
+        m_map->visit(cur.first, cur.second);
         q.pop();
 
         std::unique_lock<std::mutex> lock(m_mutex);
