@@ -8,10 +8,13 @@
 #include <random>
 #include <iostream>
 #include <ctime>
+#include <set>
 
 void BlockGen::operator()(Map &map)
 {
     std::vector<int> pivots;
+    pivots.resize(BlockGen_block_num);
+    std::set<int> pivots_aux;
     std::vector<std::tuple<int, int, int, int>> quad;
     std::vector<unsigned char> mapdata;
     mapdata.resize(map.getData().size());
@@ -21,10 +24,13 @@ void BlockGen::operator()(Map &map)
     engine.seed(static_cast<unsigned>(std::time(nullptr)));
 
     // 对于更详细的算法描述，请参考我的报告
-    // 1. 生成若干个 Block 的 “基点”
-    // 方便起见，这里不考虑坐标重复的问题，其实重复的概率还是很高的，即便有数千个格点
+    // 1. 生成若干个不重复的 “基点”
     for (int i = 0; i < BlockGen_block_num; i++)
-        pivots.push_back(dist(engine));
+    {
+        pivots[i] = dist(engine);
+        if (pivots_aux.count(pivots[i]))
+            --i;
+    }
 
     // 2. 对于每个基点，向四周 “扩展” 产生随机大小的矩形，保证矩形之间两两不相交
     for (int i = 0; i < BlockGen_block_num; i++)
@@ -98,9 +104,9 @@ void BlockGen::operator()(Map &map)
             *t[j] = dist(engine);
         }
 
-        for (int u = x - *t[0]; u <= x + *t[1]; u++)
+        for (int u = x - *t[0]; u < x + *t[1]; u++)
         {
-            for (int v = y - *t[2]; v <= y + *t[3]; v++)
+            for (int v = y - *t[2]; v < y + *t[3]; v++)
                 map.setGridState(u, v, GridState::BARRIER);
         }
     }

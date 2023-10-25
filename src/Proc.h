@@ -7,6 +7,7 @@
 
 #include "Map.h"
 #include "BlockGen.h"
+#include "BFS.h"
 
 #include <SDL.h>
 
@@ -24,10 +25,13 @@ public:
         m_generator = std::make_unique<TGenerator>();
     }
 
-    /**
-     *  @param [in] side_length_pow：窗口的边长，以 2 的幂次表示。比如传入 9，代表边长为 512
-     **/
-    void init(int side_length_pow);
+    template <typename TAlgo>
+    void setAlgo()
+    {
+        m_algo = std::make_unique<TAlgo>();
+    }
+
+    void init();
     void initMap();
     void shutdown();
     void loop();
@@ -50,10 +54,11 @@ private:
     SDL_Renderer *m_renderer = nullptr;
     bool m_window_should_close = false;
 
-    int m_side_length;          // 窗口边长
-    int m_grid_size = 16; // 方格边长，单位为像素
+    int m_side_length = 0; // 窗口边长
+    int m_grid_size = 16;  // 方格边长，单位为像素
     int m_side_grid_num;
 
     std::shared_ptr<Map> m_map;
-    std::unique_ptr<MapGenerator> m_generator = nullptr;
+    std::unique_ptr<MapGenerator> m_generator;
+    std::unique_ptr<Algo> m_algo;
 };

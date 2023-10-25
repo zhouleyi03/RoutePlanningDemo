@@ -26,11 +26,17 @@ Proc::Proc(int argc, char **argv)
     };
     argmap["-algo"] = [this](const std::string &operand)
     {
-        
+        if (operand == "BFS")
+            setAlgo<BFS>();
+        else
+        {
+            std::cout << "warning: 未知的算法！将使用默认算法。\n";
+            setAlgo<BFS>();
+        }
     };
     argmap["-s"] = [this](const std::string &operand)
     {
-        init(std::stoi(operand));
+        m_side_length = std::stoi(operand);
     };
     argmap["-g"] = [this](const std::string &operand)
     {
@@ -57,7 +63,7 @@ Proc::Proc(int argc, char **argv)
         iter->second(arg2);
     }
 
-    if (!m_window)
+    if (!m_side_length)
     {
         std::cout << "fatal error: 没有给定窗口大小！\n";
         std::exit(-1);
@@ -67,12 +73,18 @@ Proc::Proc(int argc, char **argv)
         std::cout << "warning: 没有指定地图生成器！将使用默认生成器。\n";
         setGenerator<BlockGen>();
     }
+    if (!m_algo)
+    {
+        std::cout << "warning: 未知的算法！将使用默认算法。\n";
+        setAlgo<BFS>();
+    }
+
+    init();
 }
 
-void Proc::init(int side_length_pow)
+void Proc::init()
 {
-    assert(side_length_pow > 5);
-    m_side_length = 1 << side_length_pow;
+    assert(m_side_length > 32);
 
     assert(!SDL_Init(SDL_INIT_VIDEO));
 
