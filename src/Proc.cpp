@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include <string>
 #include <functional>
+#include <mutex>
 
 Proc::Proc(int argc, char **argv)
 {
@@ -121,9 +122,23 @@ void Proc::shutdown()
 
 void Proc::loop()
 {
+    std::mutex m;
+
+    (*m_algo)(*m_map, frame_var);
+
     SDL_Event ev;
     while (!m_window_should_close)
     {
+        std::unique_lock<std::mutex> lock(m);
+        if (!frame_var)
+        {
+            m_algo->m_cv.notify_one();
+        }
+        else
+        {
+            --frame_var;
+        }
+
         clearScreen();
         renderMap();
         updateScreen();

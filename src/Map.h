@@ -8,9 +8,10 @@
 class Map
 {
     friend class BlockGen;
-    using Pos = std::pair<int, int>;
 
 public:
+    using Pos = std::pair<int, int>;
+
     Map(int w, int h);
 
     void setSEPoint(int sp_x, int sp_y, int ep_x, int ep_y);

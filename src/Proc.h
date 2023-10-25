@@ -13,6 +13,7 @@
 
 #include <memory>
 #include <utility>
+#include <atomic>
 
 class Proc
 {
@@ -61,4 +62,6 @@ private:
     std::shared_ptr<Map> m_map;
     std::unique_ptr<MapGenerator> m_generator;
     std::unique_ptr<Algo> m_algo;
+
+    std::atomic_int frame_var;
 };
