@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <utility>
+#include <mutex>
 
 class Map
 {
@@ -20,14 +21,16 @@ public:
     Pos getStartPoint() const;
     Pos getEndPoint() const;
 
-    GridState &getGridState(int x, int y);
-    GridState &getGridState(int i);
+    GridState getGridState(int x, int y);
+    GridState getGridState(int i);
 
     void setGridState(int x, int y, GridState state);
     void setGridState(int i, GridState state);
 
     void visit(int x, int y);
     void pend(int x, int y);
+
+    void printData();
 
     std::vector<GridState> &getData();
     int getX(int i) const;
@@ -40,4 +43,5 @@ private:
     int m_sp_x, m_sp_y;
     int m_ep_x, m_ep_y;
     std::vector<GridState> m_data;
+    std::mutex m_mutex;
 };

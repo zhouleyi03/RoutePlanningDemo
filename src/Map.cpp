@@ -1,6 +1,8 @@
 #include "Map.h"
 
 #include <cassert>
+#include <thread>
+#include <iostream>
 
 Map::Map(int w, int h) : m_width(w), m_height(h)
 {
@@ -33,40 +35,58 @@ Map::Pos Map::getEndPoint() const
     return {m_ep_x, m_ep_y};
 }
 
-GridState &Map::getGridState(int x, int y)
+GridState Map::getGridState(int x, int y)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     assert(x + m_width * y < m_data.size());
     return m_data[x + m_width * y];
 }
 
-GridState &Map::getGridState(int i)
+GridState Map::getGridState(int i)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     assert(i < m_data.size());
     return m_data[i];
 }
 
 void Map::setGridState(int x, int y, GridState state)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     assert(x + m_width * y < m_data.size());
     m_data[x + m_width * y] = state;
 }
 
 void Map::setGridState(int i, GridState state)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     assert(i < m_data.size());
     m_data[i] = state;
 }
 
 void Map::visit(int x, int y)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     assert(x + m_width * y < m_data.size());
     m_data[x + m_width * y] = GridState::VISITED;
 }
 
 void Map::pend(int x, int y)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     assert(x + m_width * y < m_data.size());
     m_data[x + m_width * y] = GridState::PENDING;
+}
+
+void Map::printData()
+{
+    for (int i = 0; i < m_width; i++)
+    {
+        for (int j = 0; j < m_height; j++)
+        {
+            std::cout << static_cast<int>(m_data[i + j * m_width]) << ' ';
+        }
+        std::cout << '\n';
+    }
 }
 
 std::vector<GridState> &Map::getData()

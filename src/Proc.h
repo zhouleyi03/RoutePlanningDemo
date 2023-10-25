@@ -8,6 +8,7 @@
 #include "Map.h"
 #include "BlockGen.h"
 #include "BFS.h"
+#include "DFS.h"
 
 #include <SDL.h>
 
@@ -29,7 +30,7 @@ public:
     template <typename TAlgo>
     void setAlgo()
     {
-        m_algo = std::make_unique<TAlgo>();
+        m_algo = std::make_unique<TAlgo>(&m_frame_var, &m_end_flag);
     }
 
     void init();
@@ -63,5 +64,6 @@ private:
     std::unique_ptr<MapGenerator> m_generator;
     std::unique_ptr<Algo> m_algo;
 
-    std::atomic_int frame_var;
+    int m_frame_var = 0;
+    bool m_end_flag = false;
 };

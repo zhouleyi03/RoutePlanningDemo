@@ -25,10 +25,12 @@ Proc::Proc(int argc, char **argv)
     {
         m_grid_size = std::stoi(operand);
     };
-    argmap["-algo"] = [this](const std::string &operand)
+    argmap["--algo"] = [this](const std::string &operand)
     {
         if (operand == "BFS")
             setAlgo<BFS>();
+        else if (operand == "DFS")
+            setAlgo<DFS>();
         else
         {
             std::cout << "warning: 未知的算法！将使用默认算法。\n";
@@ -90,7 +92,7 @@ void Proc::init()
     assert(!SDL_Init(SDL_INIT_VIDEO));
 
     m_window =
-        SDL_CreateWindow("CSTB Pre demo v1.0",
+        SDL_CreateWindow("Route Planning Demo v1.0 @zhouleyi",
                          SDL_WINDOWPOS_UNDEFINED,
                          SDL_WINDOWPOS_UNDEFINED,
                          m_side_length, m_side_length,
@@ -122,21 +124,17 @@ void Proc::shutdown()
 
 void Proc::loop()
 {
-    std::mutex m;
-
-    (*m_algo)(*m_map, frame_var);
-
+    (*m_algo)(m_map);
     SDL_Event ev;
     while (!m_window_should_close)
     {
-        std::unique_lock<std::mutex> lock(m);
-        if (!frame_var)
+        if (!m_frame_var)
         {
             m_algo->m_cv.notify_one();
         }
         else
         {
-            --frame_var;
+            --m_frame_var;
         }
 
         clearScreen();
@@ -147,6 +145,19 @@ void Proc::loop()
         {
             if (ev.type == SDL_QUIT)
                 m_window_should_close = true;
+            else if (ev.type == SDL_KEYDOWN)
+            {
+                switch (ev.key.keysym.sym)
+                {
+                case SDLK_ESCAPE:
+                    m_window_should_close = true;
+                    m_end_flag = true;
+                    m_algo->m_cv.notify_one();
+                    break;
+                default:
+                    break;
+                }
+            }
         }
         SDL_Delay(16); // ~ 60 fps (16.67ms per frame)
     }

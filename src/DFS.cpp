@@ -1,17 +1,17 @@
-#include "BFS.h"
+#include "DFS.h"
 
-#include <queue>
+#include <stack>
 #include <iostream>
 
-BFS::BFS(int *frame_var, bool *end_flag)
+DFS::DFS(int *frame_var, bool *end_flag)
     : Algo(frame_var, end_flag)
 {
 }
 
-void BFS::exec()
+void DFS::exec()
 {
-    std::queue<Map::Pos> q;
-    q.push(m_map->getStartPoint());
+    std::stack<Map::Pos> s;
+    s.push(m_map->getStartPoint());
 
     auto attemptVisit = [&](const Map::Pos &cur, int dx, int dy)
     {
@@ -26,20 +26,20 @@ void BFS::exec()
             }
             else if (state == GridState::EMPTY)
             {
-                q.push(t);
+                s.push(t);
                 m_map->visit(t.first, t.second);
-                std::cout << "[BFS] visit " << cur.first << ' ' << cur.second << '\n';
+                std::cout << "[DFS] visit " << cur.first << ' ' << cur.second << '\n';
             }
         }
     };
 
-    while (!q.empty())
+    while (!s.empty())
     {
-        auto cur = q.front();
-        q.pop();
+        auto cur = s.top();
+        s.pop();
 
         std::unique_lock<std::mutex> lock(m_mutex);
-        *m_frame_var = BFS_frame_interval;
+        *m_frame_var = DFS_frame_interval;
 
         attemptVisit(cur, -1, 0);
         attemptVisit(cur, 1, 0);
@@ -52,5 +52,5 @@ void BFS::exec()
             return;
     }
 
-    std::cout << "[BFS] traversal ended." << std::endl;
+    std::cout << "[DFS] traversal ended." << std::endl;
 }

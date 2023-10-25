@@ -13,11 +13,11 @@
 void BlockGen::operator()(Map &map)
 {
     std::vector<int> pivots;
-    pivots.resize(BlockGen_block_num);
+    pivots.resize(BlockGen_block_num + 3);
     std::set<int> pivots_aux;
     std::vector<std::tuple<int, int, int, int>> quad;
     std::vector<unsigned char> mapdata;
-    mapdata.resize(map.getData().size());
+    mapdata.resize(map.getData().size() + 3);
 
     std::default_random_engine engine;
     std::uniform_int_distribution<int> dist(0, map.getData().size());
