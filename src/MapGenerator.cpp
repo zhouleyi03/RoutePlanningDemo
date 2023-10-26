@@ -33,7 +33,7 @@ void MapGenerator::genSEPoint(Map &map)
     do
     {
         e = dist(engine);
-    } while (map.getGridState(e) != GridState::EMPTY && abs(e - s) > (map_size_root << 2));
+    } while (map.getGridState(e) != GridState::EMPTY && abs(e - s) < (map_size_root << 2));
     map.setGridState(e, GridState::ENDPOINT);
 
     map.setSEPoint(s, e);

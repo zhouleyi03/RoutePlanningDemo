@@ -77,6 +77,13 @@ void Map::pend(int x, int y)
     m_data[x + m_width * y] = GridState::PENDING;
 }
 
+void Map::target(int x, int y)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    assert(x + m_width * y < m_data.size());
+    m_data[x + m_width * y] = GridState::TARGET;
+}
+
 void Map::printData()
 {
     for (int i = 0; i < m_width; i++)

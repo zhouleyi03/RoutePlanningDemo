@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Algo.h"
+#include "AstarGrid.h"
 
 constexpr int Astar_frame_interval = 1;
 

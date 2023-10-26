@@ -10,6 +10,11 @@ BFS::BFS(int *frame_var, bool *end_flag)
 
 void BFS::exec()
 {
+    Map::Pos sp_pos = m_map->getStartPoint(), ep_pos;
+
+    std::vector<Map::Pos> pre;
+    pre.resize(m_map->getData().size());
+
     std::queue<Map::Pos> q;
     q.push(m_map->getStartPoint());
 
@@ -21,14 +26,16 @@ void BFS::exec()
             auto state = m_map->getGridState(t.first, t.second);
             if (state == GridState::ENDPOINT)
             {
+                pre[m_map->getIndex(t.first, t.second)] = {cur.first, cur.second};
+                ep_pos = t;
                 *m_end_flag = true;
                 return;
             }
             else if (state == GridState::EMPTY)
             {
+                pre[m_map->getIndex(t.first, t.second)] = {cur.first, cur.second};
                 q.push(t);
                 m_map->pend(t.first, t.second);
-                std::cout << "[BFS] visit " << cur.first << ' ' << cur.second << '\n';
             }
         }
     };
@@ -50,8 +57,15 @@ void BFS::exec()
         m_cv.wait(lock);
 
         if (*m_end_flag)
-            return;
+            break;
     }
 
-    std::cout << "[BFS] traversal ended." << std::endl;
+    while (1) // 回溯，输出路径
+    {
+        auto t = pre[m_map->getIndex(ep_pos.first, ep_pos.second)];
+        if (t == sp_pos)
+            break;
+        m_map->target(ep_pos.first, ep_pos.second);
+        ep_pos = t;
+    }
 }

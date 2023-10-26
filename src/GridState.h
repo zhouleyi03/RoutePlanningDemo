@@ -13,4 +13,5 @@ enum class GridState : unsigned char
     PENDING,
     STARTPOINT,
     ENDPOINT,
+    TARGET,
 };

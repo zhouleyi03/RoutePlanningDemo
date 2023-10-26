@@ -31,6 +31,8 @@ Proc::Proc(int argc, char **argv)
             setAlgo<BFS>();
         else if (operand == "DFS")
             setAlgo<DFS>();
+        else if (operand == "A*")
+            setAlgo<Astar>();
         else
         {
             std::cout << "warning: 未知的算法！将使用默认算法。\n";
@@ -124,17 +126,19 @@ void Proc::shutdown()
 
 void Proc::loop()
 {
-    (*m_algo)(m_map);
     SDL_Event ev;
     while (!m_window_should_close)
     {
-        if (!m_frame_var)
+        if (m_start_flag)
         {
-            m_algo->m_cv.notify_one();
-        }
-        else
-        {
-            --m_frame_var;
+            if (!m_frame_var)
+            {
+                m_algo->m_cv.notify_one();
+            }
+            else
+            {
+                --m_frame_var;
+            }
         }
 
         clearScreen();
@@ -149,17 +153,25 @@ void Proc::loop()
             {
                 switch (ev.key.keysym.sym)
                 {
-                case SDLK_ESCAPE:
+                case SDLK_ESCAPE: // 按 esc 退出
                     m_window_should_close = true;
                     m_end_flag = true;
                     m_algo->m_cv.notify_one();
+                    return;
+                    break;
+                case SDLK_1: // 按 1 启动
+                    if (!m_start_flag)
+                    {
+                        m_start_flag = true;
+                        (*m_algo)(m_map);
+                    }
                     break;
                 default:
                     break;
                 }
             }
         }
-        SDL_Delay(16); // ~ 60 fps (16.67ms per frame)
+        SDL_Delay(8); // ~ 120 fps
     }
 }
 
@@ -233,19 +245,22 @@ void Proc::renderMap()
             switch (m_map->getGridState(i, j))
             {
             case GridState::BARRIER:
-                fillGrid(i, j);
+                fillGrid(i, j, 0x4b, 0x00, 0x82);
                 break;
             case GridState::PENDING:
-                fillGrid(i, j, 0x00, 0x30, 0xff);
+                fillGrid(i, j, 0xa9, 0xa9, 0xa9);
                 break;
             case GridState::STARTPOINT:
                 fillGrid(i, j, 0xff, 0x45, 0x00);
                 break;
             case GridState::ENDPOINT:
-                fillGrid(i, j, 0x8a, 0x2b, 0xe2);
+                fillGrid(i, j, 0xff, 0x8c, 0x00);
                 break;
             case GridState::VISITED:
-                fillGrid(i, j, 0, 0xff, 0);
+                fillGrid(i, j, 0x7c, 0xfc, 0x00);
+                break;
+            case GridState::TARGET:
+                fillGrid(i, j, 0xff, 0x14, 0x93);
                 break;
             default:
                 break;

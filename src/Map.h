@@ -29,6 +29,7 @@ public:
 
     void visit(int x, int y);
     void pend(int x, int y);
+    void target(int x,int y);
 
     void printData();
 

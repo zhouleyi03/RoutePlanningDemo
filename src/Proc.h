@@ -9,12 +9,12 @@
 #include "BlockGen.h"
 #include "BFS.h"
 #include "DFS.h"
+#include "Astar.h"
 
 #include <SDL.h>
 
 #include <memory>
 #include <utility>
-#include <atomic>
 
 class Proc
 {
@@ -65,5 +65,6 @@ private:
     std::unique_ptr<Algo> m_algo;
 
     int m_frame_var = 0;
+    bool m_start_flag = false;
     bool m_end_flag = false;
 };
