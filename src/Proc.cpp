@@ -251,10 +251,10 @@ void Proc::renderMap()
                 fillGrid(i, j, 0xa9, 0xa9, 0xa9);
                 break;
             case GridState::STARTPOINT:
-                fillGrid(i, j, 0xff, 0x45, 0x00);
+                fillGrid(i, j, 0xff, 0x00, 0x00);
                 break;
             case GridState::ENDPOINT:
-                fillGrid(i, j, 0xff, 0x8c, 0x00);
+                fillGrid(i, j, 0xff, 0xff, 0x00);
                 break;
             case GridState::VISITED:
                 fillGrid(i, j, 0x7c, 0xfc, 0x00);

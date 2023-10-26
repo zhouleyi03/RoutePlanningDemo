@@ -25,7 +25,9 @@ protected:
 
     std::shared_ptr<Map> m_map;
     int *m_frame_var;
-    bool *m_end_flag;
+    bool *m_end_flag; // true - 算法被主线程中止
+
+    bool m_algo_end_flag = false; // true - 算法已执行完毕
 
 private:
     std::unique_ptr<std::thread> m_thread;

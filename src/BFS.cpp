@@ -28,7 +28,7 @@ void BFS::exec()
             {
                 pre[m_map->getIndex(t.first, t.second)] = {cur.first, cur.second};
                 ep_pos = t;
-                *m_end_flag = true;
+                m_algo_end_flag = true;
                 return;
             }
             else if (state == GridState::EMPTY)
@@ -57,6 +57,9 @@ void BFS::exec()
         m_cv.wait(lock);
 
         if (*m_end_flag)
+            return;
+
+        if (m_algo_end_flag)
             break;
     }
 

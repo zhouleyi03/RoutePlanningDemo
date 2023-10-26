@@ -40,7 +40,7 @@ void Astar::exec()
             auto state = m_map->getGridState(x, y);
             if (state == GridState::ENDPOINT)
             {
-                *m_end_flag = true;
+                m_algo_end_flag = true;
                 ep_grid = t;
                 return;
             }
@@ -75,11 +75,11 @@ void Astar::exec()
     {
         auto grid = open_list.top();
         auto iter = open_list_check.find(grid);
-        if (iter->m_g != grid.m_g)
+        if (iter->m_g != grid.m_g) // 检查当前 grid 的 g 值是否更新过
         {
             grid.m_g = iter->m_g;
             open_list.pop();
-            open_list.push(grid);
+            open_list.push(grid); // 若已更新过，重新压入优先队列
             continue;
         }
         open_list.pop();
@@ -98,6 +98,9 @@ void Astar::exec()
         m_cv.wait(lock);
 
         if (*m_end_flag)
+            return;
+
+        if (m_algo_end_flag)
             break;
     }
 
